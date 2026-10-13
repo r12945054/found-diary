@@ -739,7 +739,7 @@ body.encounter-open{
   height:330px;
   transform:translate(-50%,-50%) rotate(-8deg);
   filter:drop-shadow(0 22px 22px rgba(0,0,0,.38));
-  animation:handSettle .48s cubic-bezier(.2,.75,.25,1) both;
+  animation:handSettle .9s cubic-bezier(.18,.72,.22,1) both;
 }
 
 .hand-fallback .palm{
@@ -788,7 +788,7 @@ body.encounter-open{
 @keyframes handSettle{
   from{
     opacity:0;
-    transform:translate(-48%,-82%) rotate(-14deg) scale(1.04);
+    transform:translate(-49%,-70%) rotate(-12deg) scale(1.025);
   }
   to{
     opacity:1;
@@ -1116,4 +1116,35 @@ body:has(.ending-screen.is-visible) .reset-btn{
 
 @media(max-width:720px){
   .loader-text{font-size:14px}
+}
+
+
+/* ===== v26 no-flash black loader ===== */
+.site-loader{
+  background:#000 !important;
+}
+
+.loader-mark{
+  display:none !important;
+}
+
+.loader-text{
+  font-family:Arial, Helvetica, sans-serif !important;
+  font-size:13px !important;
+  color:#bdbdbd !important;
+  letter-spacing:.08em !important;
+}
+
+/*
+  During the critical loading phase, the inline <head> CSS already hides
+  the entire diary. These rules are only fallback reinforcement.
+*/
+body.loading-site{
+  background:#000 !important;
+  overflow:hidden !important;
+}
+
+body.loading-site > main{
+  visibility:hidden !important;
+  opacity:0 !important;
 }

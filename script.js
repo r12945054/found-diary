@@ -1,4 +1,4 @@
-const STORAGE_KEY = "found-diary-awakened-v25";
+const STORAGE_KEY = "found-diary-awakened-v27";
 const BURNED_KEY = "found-diary-burned";
 
 const pages = [
@@ -712,7 +712,7 @@ function prev(){
     renderPage(target);
 
     if(launch){
-      setTimeout(startEncounter,820);
+      setTimeout(startEncounter,1250);
     }
   }
 }
@@ -771,7 +771,7 @@ function startEncounter(){
   // Give the hand a moment to land on the cover before the first line appears.
   setTimeout(()=>{
     beginLineSequence("intro", INTRO_LINES, "hand");
-  },520);
+  },1150);
 }
 
 function advanceEncounter(){
@@ -951,11 +951,14 @@ async function waitForDiaryFonts(){
 function finishSiteLoading(){
   siteReady=true;
 
+  // Reveal the actual site only now, after diary fonts have finished loading.
+  document.body.classList.remove("loading-site");
+
   if(siteLoader){
     siteLoader.classList.add("is-done");
     setTimeout(()=>{
       siteLoader.hidden=true;
-    },420);
+    },180);
   }
 
   if(burned){
@@ -969,6 +972,7 @@ function finishSiteLoading(){
 async function bootSite(){
   if(burned){
     siteReady=true;
+    document.body.classList.remove("loading-site");
     if(siteLoader) siteLoader.hidden=true;
     showBurnedState();
     return;
