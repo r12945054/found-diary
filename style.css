@@ -1,0 +1,1053 @@
+@font-face{
+  font-family:"JiZhilinDiary";
+  src:url("https://cdn.jsdelivr.net/gh/Chenyu-otf/chenyuluoyan_thin@main/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:"ImpostorBrush";
+  src:url("https://cdn.jsdelivr.net/gh/max32002/masafont@2.1/webfont/MasaFont-Regular.woff2") format("woff2");
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+}
+
+:root{
+  --page:#11100f;
+  --page2:#171513;
+  --ink:#f1ece4;
+  --muted:#c7beb1;
+  --rule:rgba(245,241,233,.28);
+  --rust:#d66a48;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 50% 18%,#302a23 0,#171411 56%,#0d0b09 100%);
+  color:#eee;
+  font-family:"Noto Serif TC","PMingLiU","新細明體",serif;
+}
+
+body{min-height:100vh;overflow-x:hidden}
+
+.stage{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  padding:22px 18px 20px;
+}
+
+.ambient{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.14;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);
+  background-size:5px 5px,8px 8px;
+}
+
+.topbar{
+  width:min(1140px,86vw);
+  min-height:42px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  color:#d2c9bc;
+  font-size:12px;
+  letter-spacing:.16em;
+  z-index:10;
+}
+
+.brand{display:flex;align-items:center;gap:10px}
+.brand-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#9b352c;
+  box-shadow:0 0 10px rgba(155,53,44,.55);
+}
+.entry-meta{
+  justify-self:center;
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+  min-height:1.5em;
+  color:#ded6ca;
+  font-family:"Noto Serif TC","PMingLiU","新細明體",serif;
+  text-transform:none;
+  letter-spacing:.08em;
+}
+.entry-meta.is-empty{visibility:hidden}
+.ui-date{font-size:14px}
+.ui-label{
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:lowercase;
+  color:#aaa092;
+}
+.ui-separator{opacity:.42}
+
+.toolbar{
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.reset-btn{
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.04);
+  color:#e5ded4;
+  border-radius:999px;
+  font:inherit;
+  font-size:11px;
+  letter-spacing:.12em;
+  padding:8px 14px;
+  cursor:pointer;
+}
+
+.book-shell{
+  width:min(1250px,98vw);
+  min-height:720px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  perspective:1800px;
+  margin:10px 0;
+}
+
+.book{
+  width:min(1140px,86vw);
+  height:min(82vh,720px);
+  min-height:580px;
+  position:relative;
+  z-index:2;
+}
+
+.page{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  border-radius:8px 22px 22px 8px;
+  color:var(--ink);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 58px,
+      var(--rule) 58px,
+      var(--rule) 60px
+    ),
+    linear-gradient(135deg,var(--page2),var(--page));
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.6),
+    inset 18px 0 34px rgba(0,0,0,.22),
+    inset -1px 0 rgba(255,255,255,.05);
+  transform-origin:left center;
+}
+
+.page-face{
+  width:100%;
+  height:100%;
+  padding:58px 92px 50px;
+  overflow:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#9b8c76 transparent;
+}
+
+.cover-page{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.035),transparent 28%),
+    linear-gradient(45deg,#201a16,#392b22 50%,#211915);
+  color:#dfd3bf;
+}
+
+.cover-page::after{
+  content:"";
+  position:absolute;
+  inset:20px;
+  border:1px solid rgba(222,209,188,.16);
+  border-radius:4px 16px 16px 4px;
+}
+
+.cover-inner{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  text-align:center;
+}
+
+.cover-rule{width:62px;height:1px;background:#9f8c73}
+.cover-kicker,.cover-sub{
+  margin:0;
+  font-size:11px;
+  letter-spacing:.22em;
+  opacity:.7;
+}
+.cover-inner h1{
+  margin:0;
+  font-weight:400;
+  font-size:clamp(38px,7vw,68px);
+  letter-spacing:.18em;
+}
+.enter-btn{
+  margin-top:22px;
+  border:1px solid rgba(230,218,196,.34);
+  color:#e6dccb;
+  background:rgba(255,255,255,.03);
+  padding:11px 24px;
+  border-radius:999px;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+.entry-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:32px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.22);
+}
+
+.entry-date{
+  color:#d6cdc0;
+  font-size:15px;
+  letter-spacing:.14em;
+}
+.entry-label{
+  color:#c2b7a9;
+  font-size:11px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+}
+
+.entry{
+  font-family:"JiZhilinDiary","BiauKai","DFKai-SB","標楷體","Noto Serif TC",serif;
+  letter-spacing:.025em;
+}
+.entry h2{
+  margin:0 0 22px;
+  font-size:26px;
+  font-weight:400;
+}
+.entry p{
+  margin:0 0 15px;
+  color:var(--ink);
+  font-size:20px;
+  line-height:2.05;
+}
+
+.love-line,.obsession{
+  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  letter-spacing:.06em;
+}
+
+.memory-fragment{
+  margin:22px 0;
+  padding:18px 20px;
+  border-left:2px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.035);
+  font-size:18px;
+  line-height:1.9;
+}
+
+.overwrite,.margin-scrawl,.invasion,.reveal-page .entry{
+  font-family:"ImpostorBrush","Noto Serif TC",serif;
+}
+.erased{
+  color:#bcb3a7;
+  opacity:.55;
+  text-decoration:line-through;
+  text-decoration-thickness:3px;
+  text-decoration-color:rgba(184,58,40,.95);
+}
+.brutal{
+  text-decoration-thickness:5px;
+  opacity:.42;
+}
+.overwrite{
+  display:inline-block;
+  margin-left:.45em;
+  color:var(--rust);
+  font-size:1.18em;
+  transform:rotate(-2deg);
+}
+.margin-scrawl{
+  margin:22px 0 0 auto!important;
+  max-width:82%;
+  text-align:right;
+  color:var(--rust)!important;
+  font-size:1.16em!important;
+  line-height:1.55!important;
+  transform:rotate(-2.2deg);
+}
+.large-scrawl{font-size:1.4em!important}
+.invasion{
+  color:var(--rust)!important;
+  font-size:1.08em;
+  letter-spacing:.04em;
+}
+.invasion.block{display:block;margin:18px 0}
+.fake-erased-line{margin-bottom:9px!important}
+
+.reveal-page{
+  background:
+    radial-gradient(circle at 80% 12%,rgba(148,42,28,.08),transparent 20%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 58px,
+      var(--rule) 58px,
+      var(--rule) 60px
+    ),
+    linear-gradient(135deg,#161210,#0f0d0c);
+}
+
+.fake-page .entry{
+  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+}
+.awakened .fake-page .entry{
+  font-family:"ImpostorBrush","Noto Serif TC",serif;
+}
+
+/* 09/21 hidden page: one normal inline text flow */
+.hidden-love-paper .entry{
+  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+}
+
+.dense-love-text{
+  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-size:21px;
+  line-height:1.58;
+  letter-spacing:.015em;
+  word-break:break-all;
+  overflow-wrap:anywhere;
+  user-select:text;
+  -webkit-user-select:text;
+}
+
+/* Same ink colour as the paper, but still real selectable text. */
+.hidden-love{
+  color:var(--page);
+  user-select:text;
+  -webkit-user-select:text;
+}
+
+.surface-inline{
+  color:var(--ink);
+  padding:0 .08em;
+  user-select:text;
+  -webkit-user-select:text;
+}
+
+/* Selection reveals everything. */
+.hidden-love::selection,
+.surface-inline::selection,
+.dense-love-text::selection{
+  color:#fff8ef;
+  background:#963c2d;
+}
+.hidden-love::-moz-selection,
+.surface-inline::-moz-selection,
+.dense-love-text::-moz-selection{
+  color:#fff8ef;
+  background:#963c2d;
+}
+
+/* After final reveal, the same hidden words become visible. */
+.awakened .hidden-love{
+  color:var(--ink);
+}
+
+.hidden-after-note{
+  display:none;
+}
+.awakened .hidden-after-note{
+  display:block;
+  margin:20px 0 0 auto!important;
+  color:var(--rust)!important;
+  text-align:right;
+  font-family:"ImpostorBrush","Noto Serif TC",serif!important;
+  font-size:23px!important;
+  transform:rotate(-2deg);
+}
+
+.blood-overlay{
+  position:absolute;
+  width:min(1140px,86vw);
+  height:min(82vh,720px);
+  min-height:580px;
+  pointer-events:none;
+  opacity:0;
+  z-index:3;
+  mix-blend-mode:multiply;
+  transition:opacity .3s ease;
+}
+.blood-overlay::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(130px 80px at 8% 7%,rgba(108,8,8,.72),transparent 62%),
+    radial-gradient(55px 150px at 10% 20%,rgba(120,10,10,.5),transparent 58%),
+    radial-gradient(110px 60px at 89% 90%,rgba(90,8,8,.4),transparent 61%);
+}
+.late .blood-overlay{opacity:.26}
+.final .blood-overlay{opacity:.68}
+.awakened .blood-overlay{opacity:.4}
+
+.nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:58px;height:58px;
+  border:none;border-radius:50%;
+  background:rgba(255,255,255,.07);
+  color:#eee7dd;
+  font-size:25px;
+  cursor:pointer;
+  z-index:6;
+}
+.nav.left{left:0}
+.nav.right{right:0}
+.nav:disabled{opacity:.16;cursor:default}
+
+.hint{
+  color:#8f877a;
+  font-size:12px;
+  letter-spacing:.08em;
+}
+
+.page-turn-out{animation:turnOut .4s ease forwards}
+.page-turn-in{animation:turnIn .4s ease forwards}
+@keyframes turnOut{
+  from{transform:rotateY(0);opacity:1}
+  to{transform:rotateY(-14deg) translateX(-14px);opacity:0}
+}
+@keyframes turnIn{
+  from{transform:rotateY(10deg) translateX(14px);opacity:0}
+  to{transform:rotateY(0);opacity:1}
+}
+
+@media(max-width:720px){
+  .stage{padding:14px 8px 12px}
+  .topbar{width:94vw}
+  .book-shell{width:100%;min-height:0}
+  .book,.blood-overlay{
+    width:94vw;
+    height:78vh;
+    min-height:560px;
+  }
+  .page-face{padding:38px 30px 34px}
+  .entry p{font-size:18px;line-height:1.95}
+  .dense-love-text{font-size:18px;line-height:1.55}
+  .nav{width:44px;height:44px;font-size:20px}
+  .nav.left{left:0}.nav.right{right:0}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+
+/* ===== v18 readability ===== */
+.entry p{
+  font-size:22px;
+  line-height:2.02;
+}
+
+.entry-date{
+  font-size:16px;
+}
+
+.entry-label{
+  font-size:12px;
+}
+
+.dense-love-text{
+  font-size:23px;
+  line-height:1.55;
+}
+
+del{
+  text-decoration-thickness:2px;
+  text-decoration-color:rgba(241,236,228,.72);
+}
+
+@media(max-width:720px){
+  .entry p{
+    font-size:19.5px;
+    line-height:1.92;
+  }
+
+  .dense-love-text{
+    font-size:20px;
+    line-height:1.52;
+  }
+}
+
+
+/* ===== v19 annotation rules ===== */
+.overwrite{
+  margin-left:.22em;
+  vertical-align:baseline;
+}
+
+/* 09/22: only this visible sentence gets crossed out after the reveal. */
+.awakened .hidden-love-paper .surface-inline{
+  text-decoration-line:line-through;
+  text-decoration-thickness:3px;
+  text-decoration-color:rgba(214,106,72,.92);
+  opacity:.62;
+}
+
+.memory-link{
+  text-decoration:none;
+  border-bottom:1px dashed currentColor;
+  cursor:pointer;
+}
+.memory-link:hover{opacity:.78;}
+
+.impostor-emphasis{
+  color:#e17a58;
+  font-weight:400;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:.18em;
+}
+
+
+/* ===== v21 top UI / navigation cleanup ===== */
+.brand{
+  justify-self:start;
+  text-transform:none;
+  letter-spacing:.12em;
+}
+
+/* Metadata moved out of the paper, so the writing begins higher. */
+.page-face{
+  padding-top:44px;
+}
+
+/* Old in-page date header is no longer rendered. */
+.entry-head,
+.entry-date,
+.entry-label{
+  display:none!important;
+}
+
+/* No footer hint. */
+.hint{display:none!important}
+
+/* Arrow buttons are now the only pointer-based page-turn controls. */
+.nav{
+  transition:background .16s ease, transform .16s ease, opacity .16s ease;
+}
+.nav:not(:disabled):hover{
+  background:rgba(255,255,255,.12);
+}
+.nav:not(:disabled):active{
+  transform:translateY(-50%) scale(.94);
+}
+
+/* Future post-reading encounter. It stays hidden until frames are supplied. */
+.encounter-overlay{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:grid;
+  place-items:center;
+  background:rgba(8,7,6,.78);
+  opacity:0;
+  transition:opacity .18s ease;
+  pointer-events:none;
+}
+.encounter-overlay[hidden]{
+  display:none;
+}
+.encounter-overlay.is-visible{
+  opacity:1;
+}
+.encounter-stage{
+  width:min(760px,92vw);
+  max-height:88vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
+.encounter-stage img{
+  display:block;
+  max-width:100%;
+  max-height:72vh;
+  object-fit:contain;
+}
+.encounter-dialogue{
+  max-width:680px;
+  padding:12px 18px;
+  color:#eee8df;
+  background:rgba(15,13,12,.72);
+  border:1px solid rgba(255,255,255,.1);
+  font-family:"ImpostorBrush","Noto Serif TC",serif;
+  font-size:24px;
+  line-height:1.5;
+  text-align:center;
+}
+
+@media(max-width:720px){
+  .topbar{
+    width:94vw;
+    grid-template-columns:1fr auto;
+    grid-template-areas:
+      "brand toolbar"
+      "meta meta";
+    row-gap:8px;
+  }
+  .brand{grid-area:brand}
+  .toolbar{grid-area:toolbar}
+  .entry-meta{grid-area:meta;justify-self:start}
+  .page-face{padding-top:34px}
+  .encounter-dialogue{font-size:20px}
+}
+
+
+/* ===== v22 slimmer topbar ===== */
+.stage{
+  gap:5px;
+  padding-top:10px;
+}
+
+.topbar{
+  min-height:27px;
+  height:27px;
+  font-size:10.5px;
+  gap:12px;
+}
+
+.brand{
+  gap:7px;
+  letter-spacing:.09em;
+}
+
+.brand-dot{
+  width:6px;
+  height:6px;
+  box-shadow:0 0 7px rgba(155,53,44,.5);
+}
+
+.entry-meta{
+  min-height:1em;
+  gap:6px;
+  line-height:1;
+}
+
+.ui-date{
+  font-size:12px;
+}
+
+.ui-label{
+  font-size:9.5px;
+  letter-spacing:.13em;
+}
+
+.toolbar{
+  gap:8px;
+  line-height:1;
+}
+
+.reset-btn{
+  padding:4px 9px;
+  font-size:9.5px;
+}
+
+.book-shell{
+  margin-top:2px;
+}
+
+/* ===== v22 encounter ===== */
+body.encounter-open{
+  overflow:hidden;
+}
+
+.encounter-overlay{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:block;
+  background:transparent;
+  opacity:0;
+  transition:opacity .2s ease;
+  pointer-events:auto;
+}
+
+.encounter-overlay[hidden]{
+  display:none;
+}
+
+.encounter-overlay.is-visible{
+  opacity:1;
+}
+
+.encounter-dim{
+  position:absolute;
+  inset:0;
+  background:rgba(7,6,5,.38);
+  backdrop-filter:blur(1.5px);
+}
+
+.encounter-visual{
+  position:absolute;
+  left:50%;
+  top:48%;
+  width:min(1140px,86vw);
+  height:min(82vh,720px);
+  min-height:580px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+.encounter-visual img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.hand-fallback{
+  position:absolute;
+  left:53%;
+  top:39%;
+  width:270px;
+  height:330px;
+  transform:translate(-50%,-50%) rotate(-8deg);
+  filter:drop-shadow(0 22px 22px rgba(0,0,0,.38));
+  animation:handSettle .48s cubic-bezier(.2,.75,.25,1) both;
+}
+
+.hand-fallback .palm{
+  position:absolute;
+  left:73px;
+  top:94px;
+  width:142px;
+  height:165px;
+  border-radius:62% 58% 48% 48%;
+  background:linear-gradient(145deg,#c0ad96,#8f7b67);
+  box-shadow:
+    inset 12px 6px 20px rgba(255,255,255,.06),
+    inset -14px -10px 24px rgba(40,30,24,.18);
+}
+
+.hand-fallback .wrist{
+  position:absolute;
+  left:101px;
+  top:226px;
+  width:92px;
+  height:125px;
+  border-radius:38px 38px 24px 24px;
+  background:linear-gradient(160deg,#aa957f,#766353);
+}
+
+.hand-fallback .finger{
+  position:absolute;
+  top:10px;
+  width:29px;
+  border-radius:20px 20px 15px 15px;
+  background:linear-gradient(150deg,#c4b29c,#8e7a66);
+  transform-origin:bottom center;
+}
+
+.hand-fallback .f1{left:75px;height:125px;transform:rotate(-16deg)}
+.hand-fallback .f2{left:108px;height:145px;transform:rotate(-8deg)}
+.hand-fallback .f3{left:143px;height:153px;transform:rotate(-1deg)}
+.hand-fallback .f4{left:178px;height:140px;transform:rotate(7deg)}
+.hand-fallback .f5{
+  left:211px;
+  top:118px;
+  height:104px;
+  transform:rotate(54deg);
+}
+
+@keyframes handSettle{
+  from{
+    opacity:0;
+    transform:translate(-48%,-82%) rotate(-14deg) scale(1.04);
+  }
+  to{
+    opacity:1;
+    transform:translate(-50%,-50%) rotate(-8deg) scale(1);
+  }
+}
+
+.encounter-panel{
+  position:absolute;
+  left:50%;
+  bottom:8vh;
+  transform:translateX(-50%);
+  width:min(720px,88vw);
+  min-height:126px;
+  padding:18px 22px 16px;
+  background:rgba(17,14,12,.91);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 18px 45px rgba(0,0,0,.42);
+  color:#eee7de;
+  font-family:"ImpostorBrush","Noto Serif TC",serif;
+}
+
+.encounter-speaker{
+  margin-bottom:4px;
+  color:#d66a48;
+  font-size:17px;
+}
+
+.encounter-dialogue{
+  min-height:48px;
+  font-size:24px;
+  line-height:1.55;
+  text-align:left;
+}
+
+.encounter-controls{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:8px;
+}
+
+.encounter-arrow{
+  width:44px;
+  height:36px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.05);
+  color:#eee7de;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.encounter-choices{
+  display:flex;
+  gap:14px;
+  justify-content:flex-end;
+  margin-top:15px;
+}
+
+.encounter-choices button,
+.encounter-input-wrap button{
+  min-width:88px;
+  padding:8px 16px;
+  border:1px solid rgba(214,106,72,.45);
+  background:rgba(214,106,72,.08);
+  color:#efe7de;
+  font-family:inherit;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.encounter-choices button:hover,
+.encounter-input-wrap button:hover,
+.encounter-arrow:hover{
+  background:rgba(255,255,255,.1);
+}
+
+.encounter-input-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+}
+
+.encounter-input-wrap label{
+  color:#d4c9bc;
+  font-size:17px;
+}
+
+.encounter-input-wrap input{
+  flex:1;
+  min-width:0;
+  border:0;
+  border-bottom:1px solid rgba(255,255,255,.32);
+  background:transparent;
+  color:#f3ece3;
+  outline:none;
+  padding:6px 4px;
+  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-size:21px;
+}
+
+/* ===== v22 common ending ===== */
+.ending-screen{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 22% 14%,rgba(82,38,21,.16),transparent 24%),
+    radial-gradient(circle at 77% 81%,rgba(100,42,18,.11),transparent 28%),
+    #030303;
+  opacity:0;
+  transition:opacity .55s ease;
+  pointer-events:all;
+}
+
+.ending-screen[hidden]{
+  display:none;
+}
+
+.ending-screen.is-visible{
+  opacity:1;
+}
+
+.ending-screen::before{
+  content:"";
+  position:absolute;
+  inset:-7%;
+  background:
+    radial-gradient(ellipse at 0 50%,transparent 58%,rgba(80,35,17,.26) 67%,transparent 73%),
+    radial-gradient(ellipse at 100% 45%,transparent 60%,rgba(70,29,14,.22) 69%,transparent 75%),
+    radial-gradient(ellipse at 50% 0,transparent 65%,rgba(94,40,15,.18) 73%,transparent 78%),
+    radial-gradient(ellipse at 50% 100%,transparent 62%,rgba(82,31,11,.2) 70%,transparent 78%);
+  filter:blur(9px);
+}
+
+.burn-scorch{
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(133,58,22,.12);
+  box-shadow:
+    0 0 22px rgba(101,40,15,.08),
+    inset 0 0 22px rgba(83,31,10,.14);
+}
+
+.burn-scorch.b1{width:260px;height:150px;left:-70px;top:17%;transform:rotate(17deg)}
+.burn-scorch.b2{width:180px;height:300px;right:-52px;bottom:8%;transform:rotate(-12deg)}
+.burn-scorch.b3{width:150px;height:100px;left:42%;bottom:-42px}
+
+.ash{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:rgba(180,160,140,.14);
+  box-shadow:
+    38px -19px rgba(180,160,140,.08),
+    92px 22px rgba(180,160,140,.06),
+    -41px 37px rgba(180,160,140,.08),
+    55px 68px rgba(180,160,140,.05);
+}
+
+.ash.a1{left:18%;top:31%}
+.ash.a2{right:23%;top:19%}
+.ash.a3{left:58%;bottom:24%}
+
+@media(max-width:720px){
+  .stage{
+    padding-top:7px;
+    gap:3px;
+  }
+
+  .topbar{
+    height:23px;
+    min-height:23px;
+    row-gap:3px;
+  }
+
+  .reset-btn{
+    padding:3px 7px;
+  }
+
+  .encounter-visual{
+    width:94vw;
+    height:78vh;
+    min-height:560px;
+  }
+
+  .hand-fallback{
+    width:215px;
+    height:270px;
+    left:55%;
+    top:40%;
+    transform:translate(-50%,-50%) rotate(-8deg) scale(.82);
+  }
+
+  .encounter-panel{
+    bottom:4vh;
+    padding:15px 16px 13px;
+  }
+
+  .encounter-dialogue{
+    font-size:20px;
+  }
+
+  .encounter-input-wrap{
+    flex-wrap:wrap;
+  }
+
+  .encounter-input-wrap input{
+    flex-basis:100%;
+  }
+}
+
+
+/* ===== v23 encounter visibility fix ===== */
+.encounter-overlay [hidden],
+.encounter-panel [hidden],
+.encounter-controls[hidden],
+.encounter-choices[hidden],
+.encounter-input-wrap[hidden],
+.encounter-visual img[hidden],
+.hand-fallback[hidden],
+.ending-screen[hidden]{
+  display:none!important;
+}
+
+/* Keep ending fully visual; no attempt to close the browser tab. */
+.ending-screen{
+  cursor:default;
+}
+
+
+/* ===== v24 persistent burned state / development reset ===== */
+
+/*
+  The burnt ending covers the entire work after destruction.
+  During development only, keep the topbar and reset button reachable above it.
+*/
+.topbar{
+  position:relative;
+  z-index:2105;
+}
+
+.ending-screen{
+  z-index:2000;
+}
+
+/* When the diary is already burned, leave only the small development controls visible. */
+body:has(.ending-screen.is-visible) .brand,
+body:has(.ending-screen.is-visible) .entry-meta{
+  opacity:.18;
+}
+
+body:has(.ending-screen.is-visible) .toolbar{
+  opacity:.7;
+}
+
+body:has(.ending-screen.is-visible) .reset-btn{
+  opacity:1;
+  background:rgba(10,9,8,.7);
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#171512" />
+  <title>你撿到的日記</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="stage" aria-label="互動式日記">
+    <div class="ambient" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>你撿到的日記</span>
+      </div>
+
+      <div class="entry-meta" id="entryMeta" aria-live="polite">
+        <span class="ui-date" id="uiDate"></span>
+        <span class="ui-separator" id="uiSeparator">·</span>
+        <span class="ui-label" id="uiLabel"></span>
+      </div>
+
+      <div class="toolbar">
+        <span id="pageNow">封面</span>
+        <button class="reset-btn" id="resetBtn" type="button">重置</button>
+      </div>
+    </header>
+
+    <section class="book-shell" id="shell">
+      <div class="blood-overlay" aria-hidden="true"></div>
+
+      <div class="book">
+        <div class="page current cover-page" id="page">
+          <div class="page-face">
+            <div class="cover-inner">
+              <div class="cover-rule"></div>
+              <p class="cover-kicker">FOUND / PRIVATE</p>
+              <h1>你撿到的日記</h1>
+              <p class="cover-sub">拾得物</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="nav left" id="prevBtn" aria-label="上一頁">←</button>
+      <button class="nav right" id="nextBtn" aria-label="下一頁">→</button>
+    </section>
+    <div class="encounter-overlay" id="encounterOverlay" hidden aria-hidden="true">
+      <div class="encounter-dim"></div>
+
+      <div class="encounter-visual" aria-hidden="true">
+        <img id="encounterImage" alt="" hidden />
+        <div class="hand-fallback" id="handFallback">
+          <span class="finger f1"></span>
+          <span class="finger f2"></span>
+          <span class="finger f3"></span>
+          <span class="finger f4"></span>
+          <span class="finger f5"></span>
+          <span class="palm"></span>
+          <span class="wrist"></span>
+        </div>
+      </div>
+
+      <section class="encounter-panel" id="encounterPanel" aria-live="polite">
+        <div class="encounter-speaker">？</div>
+        <div class="encounter-dialogue" id="encounterDialogue"></div>
+
+        <div class="encounter-controls" id="encounterControls">
+          <button class="encounter-arrow" id="encounterNextBtn" type="button" aria-label="繼續">→</button>
+        </div>
+
+        <div class="encounter-choices" id="encounterChoices" hidden>
+          <button type="button" data-choice="return">還</button>
+          <button type="button" data-choice="keep">不還</button>
+        </div>
+
+        <form class="encounter-input-wrap" id="encounterInputWrap" hidden>
+          <label for="encounterInput">輸入：</label>
+          <input id="encounterInput" type="text" autocomplete="off" spellcheck="false" />
+          <button type="submit">送出</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="ending-screen" id="endingScreen" hidden aria-hidden="true">
+      <div class="burn-scorch b1"></div>
+      <div class="burn-scorch b2"></div>
+      <div class="burn-scorch b3"></div>
+      <div class="ash a1"></div>
+      <div class="ash a2"></div>
+      <div class="ash a3"></div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
