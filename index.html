@@ -5,81 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#171512" />
   <title>你撿到的日記</title>
-
-  <style id="critical-loading-style">
-    html,
-    body{
-      margin:0;
-      min-width:100%;
-      min-height:100%;
-      background:#000 !important;
-    }
-
-    body.loading-site{
-      overflow:hidden !important;
-      background:#000 !important;
-    }
-
-    body.loading-site > main{
-      visibility:hidden !important;
-      opacity:0 !important;
-    }
-
-    #siteLoader{
-      position:fixed !important;
-      inset:0 !important;
-      z-index:2147483647 !important;
-      display:flex !important;
-      align-items:center !important;
-      justify-content:center !important;
-      background:#000 !important;
-      color:#cfcfcf !important;
-      visibility:visible !important;
-      opacity:1 !important;
-      pointer-events:all !important;
-      font-family:Arial, Helvetica, sans-serif !important;
-    }
-
-    #siteLoader .loader-inner{
-      display:flex !important;
-      flex-direction:column !important;
-      align-items:center !important;
-      gap:10px !important;
-      padding:24px !important;
-      text-align:center !important;
-    }
-
-    #siteLoader .loader-mark{
-      display:none !important;
-    }
-
-    #siteLoader .loader-text{
-      color:#bdbdbd !important;
-      font-family:Arial, Helvetica, sans-serif !important;
-      font-size:13px !important;
-      font-weight:400 !important;
-      letter-spacing:.08em !important;
-    }
-
-    #siteLoader .loader-dots::after{
-      content:"..." !important;
-      display:inline !important;
-    }
-  </style>
-
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preload" href="https://cdn.jsdelivr.net/gh/Chenyu-otf/chenyuluoyan_thin@main/ChenYuluoyan-2.0-Thin.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="preload" href="https://cdn.jsdelivr.net/gh/max32002/masafont@2.1/webfont/MasaFont-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="loading-site">
-  <div class="site-loader" id="siteLoader" aria-live="polite">
-    <div class="loader-inner">
-      <div class="loader-mark">PRIVATE NOTES</div>
-      <div class="loader-text">Loading<span class="loader-dots" aria-hidden="true"></span></div>
-    </div>
-  </div>
-  <main class="stage" aria-label="互動式日記">
+<body>
+<main class="stage" aria-label="互動式日記">
     <div class="ambient" aria-hidden="true"></div>
 
     <header class="topbar">

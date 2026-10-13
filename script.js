@@ -1,5 +1,35 @@
-const STORAGE_KEY = "found-diary-awakened-v27";
+const STORAGE_KEY = "found-diary-awakened-v31";
 const BURNED_KEY = "found-diary-burned";
+
+/*
+  file:// pages can throw SecurityError when accessing localStorage
+  in some browsers/privacy modes. GitHub Pages (https://) normally works.
+*/
+function safeStorageGet(key){
+  try{
+    return window.localStorage.getItem(key);
+  }catch(_){
+    return null;
+  }
+}
+
+function safeStorageSet(key,value){
+  try{
+    window.localStorage.setItem(key,value);
+    return true;
+  }catch(_){
+    return false;
+  }
+}
+
+function safeStorageRemove(key){
+  try{
+    window.localStorage.removeItem(key);
+    return true;
+  }catch(_){
+    return false;
+  }
+}
 
 const pages = [
   {
@@ -514,10 +544,10 @@ const pages = [
   }
 ];
 
-let burned = localStorage.getItem(BURNED_KEY)==="1";
+let burned = safeStorageGet(BURNED_KEY)==="1";
 let index = -1;
 let locked = false;
-let awakened = localStorage.getItem(STORAGE_KEY) === "1";
+let awakened = safeStorageGet(STORAGE_KEY) === "1";
 
 const pageEl = document.getElementById("page");
 const prevBtn = document.getElementById("prevBtn");
@@ -525,8 +555,6 @@ const nextBtn = document.getElementById("nextBtn");
 const pageNow = document.getElementById("pageNow");
 const shell = document.getElementById("shell");
 const resetBtn = document.getElementById("resetBtn");
-const siteLoader = document.getElementById("siteLoader");
-let siteReady = false;
 const entryMeta = document.getElementById("entryMeta");
 const uiDate = document.getElementById("uiDate");
 const uiLabel = document.getElementById("uiLabel");
@@ -617,7 +645,7 @@ function renderCover(){
 }
 
 function renderPage(i){
-  if(!siteReady || locked || encounterActive || i < -1 || i >= pages.length) return;
+  if(locked || encounterActive || i < -1 || i >= pages.length) return;
   locked=true;
   pageEl.classList.add("page-turn-out");
 
@@ -660,7 +688,7 @@ function renderPage(i){
         reachedEndThisSession=true;
         if(!awakened){
           awakened=true;
-          localStorage.setItem(STORAGE_KEY,"1");
+          safeStorageSet(STORAGE_KEY,"1");
         }
       }
     }
@@ -689,8 +717,6 @@ function shouldStartEncounter(targetIndex){
 }
 
 function next(){
-  if(!siteReady) return;
-
   if(encounterActive){
     advanceEncounter();
     return;
@@ -702,7 +728,6 @@ function next(){
 }
 
 function prev(){
-  if(!siteReady) return;
   if(encounterActive) return;
 
   if(index > -1){
@@ -831,7 +856,7 @@ function finishEncounter(){
   encounterInputWrap.hidden=true;
 
   burned=true;
-  localStorage.setItem(BURNED_KEY,"1");
+  safeStorageSet(BURNED_KEY,"1");
 
   setTimeout(()=>{
     encounterOverlay.classList.remove("is-visible");
@@ -877,7 +902,7 @@ function showBurnedState(){
 
 function clearBurnedState(){
   burned=false;
-  localStorage.removeItem(BURNED_KEY);
+  safeStorageRemove(BURNED_KEY);
 
   endingScreen.classList.remove("is-visible");
   endingScreen.hidden=true;
@@ -892,8 +917,8 @@ nextBtn.addEventListener("click",next);
 prevBtn.addEventListener("click",prev);
 
 resetBtn.addEventListener("click",()=>{
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(BURNED_KEY);
+  safeStorageRemove(STORAGE_KEY);
+  safeStorageRemove(BURNED_KEY);
 
   awakened=false;
   burned=false;
@@ -934,52 +959,10 @@ document.addEventListener("keydown",e=>{
   }
 });
 
-async function waitForDiaryFonts(){
-  const tasks = [];
 
-  if(document.fonts && document.fonts.load){
-    tasks.push(document.fonts.load('22px "JiZhilinDiary"', '我愛你今天沒有什麼特別的'));
-    tasks.push(document.fonts.load('22px "ImpostorBrush"', '你看到了我也記得'));
-  }
-
-  const fontsDone = Promise.allSettled(tasks);
-  const timeout = new Promise(resolve => setTimeout(resolve, 9000));
-
-  await Promise.race([fontsDone, timeout]);
+if(burned){
+  showBurnedState();
+}else{
+  prevBtn.disabled=true;
+  shellState();
 }
-
-function finishSiteLoading(){
-  siteReady=true;
-
-  // Reveal the actual site only now, after diary fonts have finished loading.
-  document.body.classList.remove("loading-site");
-
-  if(siteLoader){
-    siteLoader.classList.add("is-done");
-    setTimeout(()=>{
-      siteLoader.hidden=true;
-    },180);
-  }
-
-  if(burned){
-    showBurnedState();
-  }else{
-    prevBtn.disabled=true;
-    shellState();
-  }
-}
-
-async function bootSite(){
-  if(burned){
-    siteReady=true;
-    document.body.classList.remove("loading-site");
-    if(siteLoader) siteLoader.hidden=true;
-    showBurnedState();
-    return;
-  }
-
-  await waitForDiaryFonts();
-  finishSiteLoading();
-}
-
-bootSite();
