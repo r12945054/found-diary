@@ -1,4 +1,4 @@
-const STORAGE_KEY = "found-diary-awakened-v24";
+const STORAGE_KEY = "found-diary-awakened-v25";
 const BURNED_KEY = "found-diary-burned";
 
 const pages = [
@@ -525,6 +525,8 @@ const nextBtn = document.getElementById("nextBtn");
 const pageNow = document.getElementById("pageNow");
 const shell = document.getElementById("shell");
 const resetBtn = document.getElementById("resetBtn");
+const siteLoader = document.getElementById("siteLoader");
+let siteReady = false;
 const entryMeta = document.getElementById("entryMeta");
 const uiDate = document.getElementById("uiDate");
 const uiLabel = document.getElementById("uiLabel");
@@ -615,7 +617,7 @@ function renderCover(){
 }
 
 function renderPage(i){
-  if(locked || encounterActive || i < -1 || i >= pages.length) return;
+  if(!siteReady || locked || encounterActive || i < -1 || i >= pages.length) return;
   locked=true;
   pageEl.classList.add("page-turn-out");
 
@@ -687,6 +689,8 @@ function shouldStartEncounter(targetIndex){
 }
 
 function next(){
+  if(!siteReady) return;
+
   if(encounterActive){
     advanceEncounter();
     return;
@@ -698,6 +702,7 @@ function next(){
 }
 
 function prev(){
+  if(!siteReady) return;
   if(encounterActive) return;
 
   if(index > -1){
@@ -929,9 +934,48 @@ document.addEventListener("keydown",e=>{
   }
 });
 
-if(burned){
-  showBurnedState();
-}else{
-  prevBtn.disabled=true;
-  shellState();
+async function waitForDiaryFonts(){
+  const tasks = [];
+
+  if(document.fonts && document.fonts.load){
+    tasks.push(document.fonts.load('22px "JiZhilinDiary"', '我愛你今天沒有什麼特別的'));
+    tasks.push(document.fonts.load('22px "ImpostorBrush"', '你看到了我也記得'));
+  }
+
+  const fontsDone = Promise.allSettled(tasks);
+  const timeout = new Promise(resolve => setTimeout(resolve, 9000));
+
+  await Promise.race([fontsDone, timeout]);
 }
+
+function finishSiteLoading(){
+  siteReady=true;
+
+  if(siteLoader){
+    siteLoader.classList.add("is-done");
+    setTimeout(()=>{
+      siteLoader.hidden=true;
+    },420);
+  }
+
+  if(burned){
+    showBurnedState();
+  }else{
+    prevBtn.disabled=true;
+    shellState();
+  }
+}
+
+async function bootSite(){
+  if(burned){
+    siteReady=true;
+    if(siteLoader) siteLoader.hidden=true;
+    showBurnedState();
+    return;
+  }
+
+  await waitForDiaryFonts();
+  finishSiteLoading();
+}
+
+bootSite();
