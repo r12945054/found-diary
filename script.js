@@ -1,4 +1,4 @@
-const STORAGE_KEY = "found-diary-awakened-v31";
+const STORAGE_KEY = "found-diary-awakened-v41";
 const BURNED_KEY = "found-diary-burned";
 
 /*
@@ -178,7 +178,7 @@ const pages = [
       <p>如果我哪天真的交了呢？</p>
       <p>帶了一個她都沒看過的女生過來，跟她說這是我女朋友。</p>
       <p>然後跟那個「女朋友」說她是我的青梅竹馬。</p>
-      <p>她會不會有一點不高興……也不用很多，一點點？就是那種，覺得有什麼改變了之類的吧。 <span class="overwrite">你想看那個女的嫉妒，好愚蠢。</span></p>
+      <p>她會不會有一點不高興……也不用很多，一點點？就是那種，覺得有什麼改變了之類的吧。 <span class="overwrite">你想看那個女的忌妒，好愚蠢。</span></p>
       <p>……至少證明我不是跟路邊電線桿差不多的東西。 <span class="overwrite">電線桿不是挺有用的嗎^ ^</span></p>
       <p>這麼說很可憐，我好歹從小就在她身邊，為她瞻前顧後，有種她是還珠格格我是小太監的氛圍。 <span class="overwrite">確實很可憐，這個比喻很適合你。</span></p>
       <p>雖然我想她應該不會說什麼。</p>
@@ -549,11 +549,12 @@ let index = -1;
 let locked = false;
 let awakened = safeStorageGet(STORAGE_KEY) === "1";
 
-const pageEl = document.getElementById("page");
+const fallbackPageEl = document.getElementById("page");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const pageNow = document.getElementById("pageNow");
 const shell = document.getElementById("shell");
+const book = shell.querySelector(".book");
 const resetBtn = document.getElementById("resetBtn");
 const entryMeta = document.getElementById("entryMeta");
 const uiDate = document.getElementById("uiDate");
@@ -561,49 +562,64 @@ const uiLabel = document.getElementById("uiLabel");
 const uiSeparator = document.getElementById("uiSeparator");
 
 /*
-  Post-reading encounter.
-  Trigger: reach the final page, then return all the way to the cover.
+  Page-flip engine:
+  - StPageFlip is used when the CDN library is available.
+  - All direct mouse/touch page-turn gestures are disabled.
+  - Readers use our side arrows / keyboard, so there is no tiny-corner problem.
+  - If CDN loading fails, the original v32 swap animation remains as fallback.
+*/
+let pageFlip = null;
+let flipEngineActive = false;
 
-  Optional images can be added later. Leave a path blank to use the CSS
-  fallback visual. Suggested files:
-    ./assets/encounter/hand.webp
-    ./assets/encounter/return.webp
-    ./assets/encounter/refuse.webp
+/*
+  Post-reading encounter.
+  Trigger remains exactly v32: reach the final reveal, then return to cover.
 */
 const ENCOUNTER_IMAGES = {
-  hand: "",
-  return: "",
-  refuse: ""
+  hand: "./assets/encounter/hand.png",
+  return: "./assets/encounter/hand.png",
+  refuse: "./assets/encounter/hand.png"
 };
 
 const INTRO_LINES = [
   "你看到了？",
-  "你知道我是誰的，一直都知道，對吧？",
-  "我當然知道你很聰明，一直都。",
-  "我原本想燒掉這本書，但它也是很值得紀錄的一個檔案，所以，還給我好嗎？"
+  "你知道我是誰的。",
+  "在打開這本日記的時候，你期望看到什麼呢?",
+  "一個可憐的靈魂?",
+  "一個可悲的肉體",
+  "如果任何儀器都測驗不出來我們的差異，我們便是一體。",
+  "我已經打算燒掉這本書了。",
+  "儘管它也算得上是很值得紀錄的文件。",
+  "但我已經全部記住了，再也不用留下它。",
+  "所以，還給我好嗎？"
 ];
 
 const RETURN_LINES = [
   "好孩子。",
-  "跟我一起完成他的遺願，好不好？"
+  "跟我一起完成他的遺願，好不好？",
+  "你知道他想聽什麼的吧?"
 ];
 
 const LOVE_LINES = [
   "是啊，我也愛你。",
   "他也愛你。",
-  "現在，去睡吧，你不是不喜歡待在他的房間嗎?"
+  "現在，回去吧。",
+  "你不是說過，不喜歡待在他的房間嗎?",
+  "剩下的我來處理就好"
 ];
 
 const REFUSE_LINES = [
   "是嗎?就這樣?",
-  "那只好，幫他完成那個小心願了。",
-  "我也想知道，你的味道。"
+  "這就是你的想法，我知道了。",
+  "那我只好幫他完成那個小心願了。",
+  "它所想知道的。",
+  "我也想知道。",
+  "你的味道。"
 ];
 
 const encounterOverlay = document.getElementById("encounterOverlay");
 const encounterImage = document.getElementById("encounterImage");
 const handFallback = document.getElementById("handFallback");
-const encounterPanel = document.getElementById("encounterPanel");
 const encounterDialogue = document.getElementById("encounterDialogue");
 const encounterControls = document.getElementById("encounterControls");
 const encounterNextBtn = document.getElementById("encounterNextBtn");
@@ -626,9 +642,175 @@ function shellState(){
   if(awakened) shell.classList.add("awakened");
 }
 
-function renderCover(){
-  pageEl.className="page current cover-page page-turn-in";
-  pageEl.innerHTML=`
+function updateMeta(){
+  if(index === -1){
+    pageNow.textContent="封面";
+    entryMeta.classList.add("is-empty");
+    uiDate.textContent="";
+    uiLabel.textContent="";
+    uiSeparator.hidden=true;
+    return;
+  }
+
+  const p=pages[index];
+  const hasDate=Boolean(p.date && p.date !== "—");
+  const hasLabel=Boolean(p.label);
+  entryMeta.classList.toggle("is-empty", !hasDate && !hasLabel);
+  uiDate.textContent=hasDate ? p.date : "";
+  uiLabel.textContent=hasLabel ? p.label : "";
+  uiSeparator.hidden=!(hasDate && hasLabel);
+  pageNow.textContent=`${index+1} / ${pages.length}`;
+}
+
+function syncNav(){
+  if(encounterActive || burned){
+    prevBtn.disabled=true;
+    nextBtn.disabled=true;
+    return;
+  }
+  prevBtn.disabled=index===-1;
+  nextBtn.disabled=index===pages.length-1;
+}
+
+function bodyForLeaf(p){
+  if(p.type === "hiddenlove") return p.body;
+  if(!p.after) return p.body;
+  return `
+    <div class="first-read-only">${p.body}</div>
+    <div class="second-read-only">${p.after}</div>`;
+}
+
+function leafClass(p){
+  if(p.type === "fake") return "fake-page";
+  if(p.type === "reveal") return "reveal-page";
+  if(p.type === "hiddenlove") return "hidden-love-paper";
+  return "";
+}
+
+function coverLeafHTML(){
+  return `
+    <div class="diary-leaf cover-page" data-density="hard" data-diary-index="-1">
+      <div class="page-face">
+        <div class="cover-inner">
+          <div class="cover-rule"></div>
+          <p class="cover-kicker">FOUND / PRIVATE</p>
+          <h1>你撿到的日記</h1>
+          <p class="cover-sub">拾得物</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function diaryLeafHTML(p,i){
+  return `
+    <div class="diary-leaf ${leafClass(p)}" data-diary-index="${i}">
+      <div class="page-face">
+        <article class="entry">
+          ${p.title ? `<h2>${p.title}</h2>` : ""}
+          ${bodyForLeaf(p)}
+        </article>
+      </div>
+    </div>`;
+}
+
+function resetVisibleScroll(){
+  // v41: intentionally preserve each page's current vertical scroll position.
+  // StPageFlip keeps each leaf in the DOM, so returning to a page resumes where it was.
+}
+
+function markCurrentIndex(newIndex){
+  index=newIndex;
+  updateMeta();
+
+  if(index === pages.length-1){
+    reachedEndThisSession=true;
+    if(!awakened){
+      awakened=true;
+      safeStorageSet(STORAGE_KEY,"1");
+    }
+  }
+
+  shellState();
+  syncNav();
+  resetVisibleScroll();
+
+  if(shouldStartEncounter(index)){
+    encounterShownThisSession=true;
+    setTimeout(startEncounter,1250);
+  }
+}
+
+function initFlipEngine(){
+  if(!(window.St && typeof window.St.PageFlip === "function")) return false;
+
+  const w=Math.max(300, Math.round(book.getBoundingClientRect().width || 900));
+  const h=Math.max(460, Math.round(book.getBoundingClientRect().height || 680));
+
+  const host=document.createElement("div");
+  host.id="flipbook";
+  host.className="flipbook-host";
+  host.innerHTML=coverLeafHTML() + pages.map(diaryLeafHTML).join("");
+
+  book.innerHTML="";
+  book.appendChild(host);
+  book.classList.add("flip-engine-active");
+
+  try{
+    pageFlip=new window.St.PageFlip(host,{
+      width:w,
+      height:h,
+      size:"fixed",
+      minWidth:280,
+      maxWidth:w,
+      minHeight:420,
+      maxHeight:h,
+      drawShadow:true,
+      flippingTime:720,
+      usePortrait:true,
+      startZIndex:0,
+      autoSize:false,
+      maxShadowOpacity:.34,
+      showCover:false,
+      mobileScrollSupport:false,
+      swipeDistance:9999,
+      clickEventForward:true,
+      useMouseEvents:false,
+      showPageCorners:false,
+      disableFlipByClick:false
+    });
+
+    const leaves=host.querySelectorAll(".diary-leaf");
+    pageFlip.loadFromHTML(leaves);
+
+    pageFlip.on("flip",e=>{
+      const enginePage=Number(e.data);
+      markCurrentIndex(enginePage-1);
+    });
+
+    flipEngineActive=true;
+    index=-1;
+    updateMeta();
+    shellState();
+    syncNav();
+    return true;
+  }catch(err){
+    console.warn("PageFlip initialization failed; using v32 fallback.",err);
+    pageFlip=null;
+    flipEngineActive=false;
+    book.classList.remove("flip-engine-active");
+    book.innerHTML=`<div class="page current cover-page" id="page"><div class="page-face"><div class="cover-inner"><div class="cover-rule"></div><p class="cover-kicker">FOUND / PRIVATE</p><h1>你撿到的日記</h1><p class="cover-sub">拾得物</p></div></div></div>`;
+    return false;
+  }
+}
+
+/* ===== Original v32 renderer: fallback only ===== */
+function fallbackPage(){ return document.getElementById("page"); }
+
+function renderCoverFallback(){
+  const el=fallbackPage();
+  if(!el) return;
+  el.className="page current cover-page page-turn-in";
+  el.innerHTML=`
     <div class="page-face">
       <div class="cover-inner">
         <div class="cover-rule"></div>
@@ -637,53 +819,25 @@ function renderCover(){
         <p class="cover-sub">拾得物</p>
       </div>
     </div>`;
-  pageNow.textContent="封面";
-  entryMeta.classList.add("is-empty");
-  uiDate.textContent="";
-  uiLabel.textContent="";
-  uiSeparator.hidden=true;
 }
 
-function renderPage(i){
+function renderFallback(i){
   if(locked || encounterActive || i < -1 || i >= pages.length) return;
+  const el=fallbackPage();
+  if(!el) return;
   locked=true;
-  pageEl.classList.add("page-turn-out");
+  el.classList.add("page-turn-out");
 
   setTimeout(()=>{
     index=i;
-
     if(index===-1){
-      renderCover();
+      renderCoverFallback();
     }else{
       const p=pages[index];
-      const body = (p.type === "hiddenlove") ? p.body : (awakened && p.after ? p.after : p.body);
-      const typeClass =
-        p.type === "fake" ? "fake-page" :
-        p.type === "reveal" ? "reveal-page" :
-        p.type === "hiddenlove" ? "hidden-love-paper" : "";
-
-      pageEl.className=`page current ${typeClass} page-turn-in`;
-      pageEl.innerHTML=`
-        <div class="page-face">
-          <article class="entry">
-            ${p.title ? `<h2>${p.title}</h2>` : ""}
-            ${body}
-          </article>
-        </div>`;
-
-      const hasDate = Boolean(p.date && p.date !== "—");
-      const hasLabel = Boolean(p.label);
-      entryMeta.classList.toggle("is-empty", !hasDate && !hasLabel);
-      uiDate.textContent = hasDate ? p.date : "";
-      uiLabel.textContent = hasLabel ? p.label : "";
-      uiSeparator.hidden = !(hasDate && hasLabel);
-
-      pageNow.textContent=`${index+1} / ${pages.length}`;
-      requestAnimationFrame(() => {
-        const face = pageEl.querySelector(".page-face");
-        if(face) face.scrollTop = 0;
-      });
-
+      const body=(p.type === "hiddenlove") ? p.body : (awakened && p.after ? p.after : p.body);
+      const typeClass=leafClass(p);
+      el.className=`page current ${typeClass} page-turn-in`;
+      el.innerHTML=`<div class="page-face"><article class="entry">${p.title ? `<h2>${p.title}</h2>` : ""}${body}</article></div>`;
       if(index === pages.length-1){
         reachedEndThisSession=true;
         if(!awakened){
@@ -692,59 +846,56 @@ function renderPage(i){
         }
       }
     }
-
+    updateMeta();
     shellState();
-    prevBtn.disabled=index===-1;
-    nextBtn.disabled=index===pages.length-1;
+    syncNav();
+    resetVisibleScroll();
 
     requestAnimationFrame(()=>{
-      pageEl.classList.remove("page-turn-out");
-      setTimeout(()=>{
-        pageEl.classList.remove("page-turn-in");
-        locked=false;
-      },420);
+      el.classList.remove("page-turn-out");
+      setTimeout(()=>{ el.classList.remove("page-turn-in"); locked=false; },420);
     });
   },300);
 }
 
 function shouldStartEncounter(targetIndex){
-  return (
-    targetIndex === -1 &&
-    reachedEndThisSession &&
-    awakened &&
-    !encounterShownThisSession
-  );
+  return targetIndex === -1 && reachedEndThisSession && awakened && !encounterShownThisSession;
+}
+
+function engineBusy(){
+  if(!flipEngineActive || !pageFlip || typeof pageFlip.getState !== "function") return false;
+  const state=pageFlip.getState();
+  return state === "flipping" || state === "user_fold" || state === "fold_corner";
 }
 
 function next(){
-  if(encounterActive){
-    advanceEncounter();
-    return;
-  }
+  if(encounterActive){ advanceEncounter(); return; }
+  if(index >= pages.length-1 || locked || engineBusy()) return;
 
-  if(index < pages.length-1){
-    renderPage(index+1);
+  const target=index+1;
+  if(flipEngineActive && pageFlip){
+    pageFlip.flipNext("bottom");
+  }else{
+    renderFallback(target);
   }
 }
 
 function prev(){
-  if(encounterActive) return;
+  if(encounterActive || index <= -1 || locked || engineBusy()) return;
 
-  if(index > -1){
-    const target=index-1;
+  const target=index-1;
+  if(flipEngineActive && pageFlip){
+    pageFlip.flipPrev("bottom");
+  }else{
     const launch=shouldStartEncounter(target);
     if(launch) encounterShownThisSession=true;
-    renderPage(target);
-
-    if(launch){
-      setTimeout(startEncounter,1250);
-    }
+    renderFallback(target);
+    if(launch) setTimeout(startEncounter,1250);
   }
 }
 
 function setEncounterImage(kind){
   const src=ENCOUNTER_IMAGES[kind] || "";
-
   if(src){
     encounterImage.src=src;
     encounterImage.hidden=false;
@@ -763,25 +914,20 @@ function beginLineSequence(mode, lines, imageKind="hand"){
   encounterMode=mode;
   encounterLines=[...lines];
   encounterLineIndex=0;
-
   encounterChoices.hidden=true;
   encounterInputWrap.hidden=true;
   encounterControls.hidden=false;
-
   setEncounterImage(imageKind);
   showEncounterLine();
 }
 
 function startEncounter(){
   if(encounterActive) return;
-
   encounterActive=true;
   prevBtn.disabled=true;
   nextBtn.disabled=true;
-
   encounterOverlay.hidden=false;
   encounterOverlay.setAttribute("aria-hidden","false");
-
   setEncounterImage("hand");
   encounterDialogue.textContent="";
   encounterControls.hidden=true;
@@ -793,71 +939,55 @@ function startEncounter(){
     document.body.classList.add("encounter-open");
   });
 
-  // Give the hand a moment to land on the cover before the first line appears.
   setTimeout(()=>{
     beginLineSequence("intro", INTRO_LINES, "hand");
-  },1150);
+  },1350);
 }
 
 function advanceEncounter(){
   if(!encounterActive || encounterControls.hidden) return;
-
   if(encounterLineIndex < encounterLines.length-1){
     encounterLineIndex+=1;
     showEncounterLine();
-
     if(encounterMode==="intro" && encounterLineIndex===encounterLines.length-1){
       encounterControls.hidden=true;
       encounterChoices.hidden=false;
     }
-
     if(encounterMode==="return" && encounterLineIndex===encounterLines.length-1){
       encounterControls.hidden=true;
       encounterInputWrap.hidden=false;
       setTimeout(()=>encounterInput.focus(),40);
     }
-
     return;
   }
-
-  if(encounterMode==="love" || encounterMode==="refuse"){
-    finishEncounter();
-  }
+  if(encounterMode==="love" || encounterMode==="refuse") finishEncounter();
 }
 
 function chooseReturn(){
   encounterChoices.hidden=true;
   beginLineSequence("return", RETURN_LINES, "return");
 }
-
 function chooseKeep(){
   encounterChoices.hidden=true;
   beginLineSequence("refuse", REFUSE_LINES, "refuse");
 }
-
-function normalizeLoveInput(value){
-  return value.trim().replace(/\s+/g,"");
-}
-
+function normalizeLoveInput(value){ return value.trim().replace(/\s+/g,""); }
 function submitLoveInput(){
   const value=normalizeLoveInput(encounterInput.value);
   encounterInputWrap.hidden=true;
-
-  if(value==="我愛你" || value==="我愛你。" || value==="我愛你."){
+  if(value==="我愛你" || value==="我愛你。" || value==="我愛你!" || value==="我愛你！" || value==="我愛你？" )
+    {
     beginLineSequence("love", LOVE_LINES, "return");
   }else{
     beginLineSequence("refuse", REFUSE_LINES, "refuse");
   }
 }
-
 function finishEncounter(){
   encounterControls.hidden=true;
   encounterChoices.hidden=true;
   encounterInputWrap.hidden=true;
-
   burned=true;
   safeStorageSet(BURNED_KEY,"1");
-
   setTimeout(()=>{
     encounterOverlay.classList.remove("is-visible");
     showBurnedState();
@@ -865,18 +995,11 @@ function finishEncounter(){
 }
 
 encounterNextBtn.addEventListener("click",advanceEncounter);
-
 encounterChoices.addEventListener("click",e=>{
   const button=e.target.closest("button[data-choice]");
   if(!button) return;
-
-  if(button.dataset.choice==="return"){
-    chooseReturn();
-  }else{
-    chooseKeep();
-  }
+  if(button.dataset.choice==="return") chooseReturn(); else chooseKeep();
 });
-
 encounterInputWrap.addEventListener("submit",e=>{
   e.preventDefault();
   submitLoveInput();
@@ -884,61 +1007,58 @@ encounterInputWrap.addEventListener("submit",e=>{
 
 function showBurnedState(){
   burned=true;
-
   endingScreen.hidden=false;
   endingScreen.setAttribute("aria-hidden","false");
-
-  // Hide diary navigation/content, but keep the topbar reset button during development.
   shell.style.visibility="hidden";
   prevBtn.style.visibility="hidden";
   nextBtn.style.visibility="hidden";
   entryMeta.classList.add("is-empty");
   pageNow.textContent="已焚";
-
-  requestAnimationFrame(()=>{
-    endingScreen.classList.add("is-visible");
-  });
+  requestAnimationFrame(()=>endingScreen.classList.add("is-visible"));
 }
 
 function clearBurnedState(){
   burned=false;
   safeStorageRemove(BURNED_KEY);
-
   endingScreen.classList.remove("is-visible");
   endingScreen.hidden=true;
   endingScreen.setAttribute("aria-hidden","true");
-
   shell.style.visibility="";
   prevBtn.style.visibility="";
   nextBtn.style.visibility="";
 }
 
-nextBtn.addEventListener("click",next);
-prevBtn.addEventListener("click",prev);
-
-resetBtn.addEventListener("click",()=>{
+function resetReader(){
   safeStorageRemove(STORAGE_KEY);
   safeStorageRemove(BURNED_KEY);
-
   awakened=false;
   burned=false;
   reachedEndThisSession=false;
   encounterShownThisSession=false;
   encounterActive=false;
-
   encounterOverlay.classList.remove("is-visible");
   encounterOverlay.hidden=true;
   encounterOverlay.setAttribute("aria-hidden","true");
-
   clearBurnedState();
   document.body.classList.remove("encounter-open");
-
   index=-1;
-  renderCover();
-  shellState();
-  prevBtn.disabled=true;
-  nextBtn.disabled=false;
-});
+
+  if(flipEngineActive && pageFlip){
+    shell.classList.remove("awakened","late","final");
+    pageFlip.turnToPage(0);
+    markCurrentIndex(-1);
+  }else{
+    renderCoverFallback();
+    updateMeta();
+    shellState();
+    syncNav();
+    if(window.St && typeof window.St.PageFlip === "function") initFlipEngine();
+  }
+}
+
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
+resetBtn.addEventListener("click",resetReader);
 
 document.addEventListener("keydown",e=>{
   if(encounterActive){
@@ -948,7 +1068,6 @@ document.addEventListener("keydown",e=>{
     }
     return;
   }
-
   if(e.key==="ArrowRight"){
     e.preventDefault();
     next();
@@ -959,10 +1078,35 @@ document.addEventListener("keydown",e=>{
   }
 });
 
+function loadPageFlipLibraryInBackground(){
+  if(window.St && typeof window.St.PageFlip === "function"){
+    if(index === -1 && !burned && !encounterActive) initFlipEngine();
+    return;
+  }
 
+  const tag=document.createElement("script");
+  tag.src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js";
+  tag.async=true;
+  tag.onload=()=>{
+    // Upgrade only while the reader is still on the cover. If they already began
+    // reading, keep the stable v32 fallback for that session instead of jumping DOM.
+    if(index === -1 && !burned && !encounterActive && !flipEngineActive){
+      initFlipEngine();
+    }
+  };
+  tag.onerror=()=>{
+    console.info("StPageFlip unavailable; keeping v32 page transition.");
+  };
+  document.head.appendChild(tag);
+}
+
+/* Init: v32 is immediately usable; StPageFlip upgrades it in the background. */
 if(burned){
   showBurnedState();
 }else{
-  prevBtn.disabled=true;
+  index=-1;
+  updateMeta();
   shellState();
+  syncNav();
+  loadPageFlipLibraryInBackground();
 }

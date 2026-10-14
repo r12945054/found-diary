@@ -1,6 +1,6 @@
 @font-face{
-  font-family:"JiZhilinDiary";
-  src:url("https://cdn.jsdelivr.net/gh/Chenyu-otf/chenyuluoyan_thin@main/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+  font-family:"OriginalDiary";
+  src:url("https://cdn.jsdelivr.net/gh/max32002/JasonHandWritingFonts@20240409/webfont/JasonHandwriting1-Regular.woff2") format("woff2");
   font-style:normal;
   font-weight:400;
   font-display:swap;
@@ -19,7 +19,7 @@
   --page2:#171513;
   --ink:#f1ece4;
   --muted:#c7beb1;
-  --rule:rgba(245,241,233,.28);
+  --rule:rgba(224,219,210,.18);
   --rust:#d66a48;
 }
 
@@ -238,7 +238,7 @@ body{min-height:100vh;overflow-x:hidden}
 }
 
 .entry{
-  font-family:"JiZhilinDiary","BiauKai","DFKai-SB","標楷體","Noto Serif TC",serif;
+  font-family:"OriginalDiary","BiauKai","DFKai-SB","標楷體","Noto Serif TC",serif;
   letter-spacing:.025em;
 }
 .entry h2{
@@ -254,7 +254,7 @@ body{min-height:100vh;overflow-x:hidden}
 }
 
 .love-line,.obsession{
-  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-family:"OriginalDiary","Noto Serif TC",serif;
   letter-spacing:.06em;
 }
 
@@ -320,7 +320,7 @@ body{min-height:100vh;overflow-x:hidden}
 }
 
 .fake-page .entry{
-  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-family:"OriginalDiary","Noto Serif TC",serif;
 }
 .awakened .fake-page .entry{
   font-family:"ImpostorBrush","Noto Serif TC",serif;
@@ -328,11 +328,11 @@ body{min-height:100vh;overflow-x:hidden}
 
 /* 09/21 hidden page: one normal inline text flow */
 .hidden-love-paper .entry{
-  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-family:"OriginalDiary","Noto Serif TC",serif;
 }
 
 .dense-love-text{
-  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-family:"OriginalDiary","Noto Serif TC",serif;
   font-size:21px;
   line-height:1.58;
   letter-spacing:.015em;
@@ -886,7 +886,7 @@ body.encounter-open{
   color:#f3ece3;
   outline:none;
   padding:6px 4px;
-  font-family:"JiZhilinDiary","Noto Serif TC",serif;
+  font-family:"OriginalDiary","Noto Serif TC",serif;
   font-size:21px;
 }
 
@@ -1052,4 +1052,160 @@ body:has(.ending-screen.is-visible) .reset-btn{
   background:rgba(10,9,8,.7);
 }
 
+
+
+
+/* ===== v32 mobile first-load performance ===== */
+
+/*
+  Fonts are no longer preloaded from index.html.
+  The browser fetches each handwriting font only when a page actually uses it.
+*/
+@media(max-width:720px){
+  .ambient{
+    display:none;
+  }
+
+  .page{
+    box-shadow:
+      0 18px 38px rgba(0,0,0,.48),
+      inset 10px 0 22px rgba(0,0,0,.18);
+  }
+
+  .blood-overlay{
+    mix-blend-mode:normal;
+  }
+}
+
+
+/* ===== v38: StPageFlip, preserving v32 story-state logic ===== */
+
+/* When StPageFlip is available, the original v32 single-page element becomes a fallback only. */
+.book.flip-engine-active{
+  overflow:visible;
+}
+
+.flipbook-host{
+  width:100%;
+  height:100%;
+  position:relative;
+}
+
+/* StPageFlip receives these as its HTML pages. */
+.diary-leaf{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border-radius:8px 22px 22px 8px;
+  color:var(--ink);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 58px,
+      var(--rule) 58px,
+      var(--rule) 60px
+    ),
+    linear-gradient(135deg,var(--page2),var(--page));
+  box-shadow:
+    0 26px 56px rgba(0,0,0,.50),
+    inset 18px 0 34px rgba(0,0,0,.19),
+    inset -1px 0 rgba(255,255,255,.035);
+}
+
+.diary-leaf.cover-page{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.028),transparent 28%),
+    linear-gradient(45deg,#201a16,#392b22 50%,#211915);
+}
+
+.diary-leaf.cover-page .page-face{
+  position:relative;
+}
+
+.diary-leaf.cover-page .cover-inner{
+  z-index:2;
+}
+
+/* Preserve v32's scrollable diary page. StPageFlip gestures are disabled in JS,
+   so touch drag belongs to vertical reading rather than page-turning. */
+.diary-leaf .page-face{
+  width:100%;
+  height:100%;
+  padding:44px 92px 56px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+  scrollbar-width:thin;
+  scrollbar-color:#796f63 transparent;
+}
+
+.diary-leaf .page-face::-webkit-scrollbar{width:7px}
+.diary-leaf .page-face::-webkit-scrollbar-track{background:transparent}
+.diary-leaf .page-face::-webkit-scrollbar-thumb{
+  background:rgba(208,199,187,.18);
+  border-radius:999px;
+}
+
+/* Critical: second-read replacement is fully absent on first read.
+   This keeps red notes and strike-throughs from appearing early. */
+.second-read-only{display:none!important}
+.awakened .first-read-only{display:none!important}
+.awakened .second-read-only{display:block!important}
+
+/* StPageFlip's transient clones should inherit the diary styling. */
+.stf__item .diary-leaf,
+.stf__block .diary-leaf{
+  height:100%;
+}
+
+/* ===== v41 transparent encounter hand =====
+   This is the user's final transparent PNG. It settles directly over the
+   center title area of the cover instead of hanging from the top edge. */
+#encounterImage{
+  inset:auto!important;
+  left:50%!important;
+  top:50%!important;
+  width:min(500px,46vw)!important;
+  height:auto!important;
+  max-height:min(58vh,520px)!important;
+  object-fit:contain!important;
+  transform:translate(-50%,-62%) rotate(-1deg)!important;
+  transform-origin:50% 50%!important;
+  opacity:0;
+  mix-blend-mode:normal!important;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.42));
+}
+
+.encounter-overlay.is-visible #encounterImage:not([hidden]){
+  animation:realHandDrop 1.05s cubic-bezier(.18,.74,.18,1) .18s both;
+}
+
+@keyframes realHandDrop{
+  from{
+    opacity:0;
+    transform:translate(-50%,-78%) rotate(-2deg) scale(.985);
+  }
+  24%{opacity:1}
+  to{
+    opacity:1;
+    transform:translate(-50%,-62%) rotate(-1deg) scale(1);
+  }
+}
+
+@media(max-width:720px){
+  .diary-leaf .page-face{padding:34px 26px 48px}
+  #encounterImage{
+    width:min(470px,78vw)!important;
+    max-height:46vh!important;
+    transform:translate(-50%,-60%) rotate(-1deg)!important;
+  }
+  @keyframes realHandDrop{
+    from{opacity:0;transform:translate(-50%,-74%) rotate(-2deg) scale(.985)}
+    24%{opacity:1}
+    to{opacity:1;transform:translate(-50%,-60%) rotate(-1deg) scale(1)}
+  }
+}
 
