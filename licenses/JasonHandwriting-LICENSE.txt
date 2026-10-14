@@ -1,0 +1,6 @@
+清松手寫體 / JasonHandwriting
+Original author: 游清松 (Yu Ching Sung)
+Source: https://github.com/jasonhandwriting/JasonHandwriting
+Webfont build used by this site: https://github.com/max32002/JasonHandWritingFonts
+License: SIL Open Font License 1.1
+The font file is loaded remotely and is not bundled here.

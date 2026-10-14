@@ -1,0 +1,14 @@
+正風毛筆 / MasaFont
+Source: https://github.com/max32002/masafont
+Webfont source:
+https://cdn.jsdelivr.net/gh/max32002/masafont@2.1/webfont/MasaFont-Regular.woff2
+
+License: SIL Open Font License 1.1
+
+The upstream project states that the font may be freely used,
+commercially used, redistributed and modified under SIL OFL 1.1.
+The font is loaded from the public upstream webfont path and is not
+redistributed inside this project archive.
+
+Upstream repository:
+https://github.com/max32002/masafont

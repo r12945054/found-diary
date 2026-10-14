@@ -1,0 +1,12 @@
+辰宇落雁體 Thin / Chenyuluoyan Thin
+Source: https://github.com/Chenyu-otf/chenyuluoyan_thin
+License: SIL Open Font License 1.1
+
+Copyright (c) 2022, Wang, Li-Yu and Liu, Wei-Chen,
+with Reserved Font Name "辰宇落雁" and "Chenyuluoyan".
+
+The font is loaded from the public upstream repository/CDN and is not
+redistributed inside this project archive.
+
+Full upstream license:
+https://github.com/Chenyu-otf/chenyuluoyan_thin/blob/main/license.txt
