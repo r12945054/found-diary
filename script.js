@@ -694,8 +694,8 @@ function coverLeafHTML(){
         <div class="cover-inner">
           <div class="cover-rule"></div>
           <p class="cover-kicker">FOUND / PRIVATE</p>
-          <h1>你撿到的日記</h1>
-          <p class="cover-sub">拾得物</p>
+          <h1>一本日記</h1>
+          <p class="cover-sub">你摸進對方房間裡找到的</p>
         </div>
       </div>
     </div>`;
@@ -798,7 +798,7 @@ function initFlipEngine(){
     pageFlip=null;
     flipEngineActive=false;
     book.classList.remove("flip-engine-active");
-    book.innerHTML=`<div class="page current cover-page" id="page"><div class="page-face"><div class="cover-inner"><div class="cover-rule"></div><p class="cover-kicker">FOUND / PRIVATE</p><h1>你撿到的日記</h1><p class="cover-sub">拾得物</p></div></div></div>`;
+    book.innerHTML=`<div class="page current cover-page" id="page"><div class="page-face"><div class="cover-inner"><div class="cover-rule"></div><p class="cover-kicker">FOUND / PRIVATE</p><h1>一本日記</h1><p class="cover-sub">你摸進對方房間裡找到的</p></div></div></div>`;
     return false;
   }
 }
@@ -815,8 +815,8 @@ function renderCoverFallback(){
       <div class="cover-inner">
         <div class="cover-rule"></div>
         <p class="cover-kicker">FOUND / PRIVATE</p>
-        <h1>你撿到的日記</h1>
-        <p class="cover-sub">拾得物</p>
+        <h1>一本日記</h1>
+        <p class="cover-sub">你摸進對方房間裡找到的</p>
       </div>
     </div>`;
 }
