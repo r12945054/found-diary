@@ -127,7 +127,7 @@ const pages = [
       <p>說起來她去全聯其實是為了買新的洗髮精，說原本喜歡的那瓶已經被加水稀釋到基本沒有味道也沒什麼清理能力了。</p>
       <p>其實我聞得出來，味道淡了很多。 <span class="overwrite">我也還記得，因為你害怕這種改變，你提醒了她幾次，讓她不用省這種錢。</span></p>
       <p>依照她的個性應該會繼續買同一牌吧，為什麼不直接屯個五瓶，反正這種東西保存期限應該很長。</p>
-      <p>(我後來去查了，只能保存三年，好吧，那希望她每次去買的時候都也還記得給我帶一瓶飲料來，是西瓜的也好，水蜜桃的也罷，都可以。) <span class="overwrite">甚至去查了，很可悲。</span></p>
+      <p>(我後來去查了，只能保存三年，好吧，那希望她每次去買的時候都也還記得給我帶一瓶飲料來，是西瓜的也好，水蜜桃的也罷，都可以。) <span class="overwrite">甚至去確認了，很可悲。</span></p>
     `
   },
   {
@@ -138,35 +138,21 @@ const pages = [
     body:`
       <p>她今天突然跑來問我為什麼不交女朋友。我回說也沒有什麼，可能是因為麻煩。</p>
       <p>她居然點頭，還說確實。</p>
-
       <p>確實。</p>
-
       <p>如果都跟這傢伙一樣亂七八糟的話，那真的很麻煩。(雖然我習慣了)</p>
-
       <p>有時候真的很想知道她腦袋裡裝什麼。</p>
-
       <p>如果我哪天真的交了呢？</p>
-
       <p>帶了一個她都沒看過的女生過來，跟她說這是我女朋友。</p>
       <p>然後跟那個「女朋友」說她是我的青梅竹馬。</p>
-
       <p>她會不會有一點不高興……也不用很多，一點點？就是那種，覺得有什麼改變了之類的吧。</p>
-
       <p>……至少證明我不是跟路邊電線桿差不多的東西。</p>
-
       <p>這麼說很可憐，我好歹從小就在她身邊，為她瞻前顧後，有種她是還珠格格我是小太監的氛圍。</p>
-
       <p>雖然我想她應該不會說什麼。</p>
       <p>那傢伙會沒良心地、很高興地說恭喜，然後可能會在那邊跟沒營養的捷運跑酷小說影片一樣，一口一個嫂子嫂子地喊。</p>
-
       <p>想到這裡就覺得很煩。</p>
-
       <p>不，或許以她的個性，她會纏上那個見鬼的女朋友，說怎麼那麼沒眼光看上了我。</p>
-
       <p>我想也是。</p>
-
       <p>但我不在乎，我不在乎其他人是不是看上了我，或看不上我。</p>
-
       <p>誰在乎。</p>
     `,
     after:`
@@ -179,7 +165,7 @@ const pages = [
       <p>帶了一個她都沒看過的女生過來，跟她說這是我女朋友。</p>
       <p>然後跟那個「女朋友」說她是我的青梅竹馬。</p>
       <p>她會不會有一點不高興……也不用很多，一點點？就是那種，覺得有什麼改變了之類的吧。 <span class="overwrite">你想看那個女的忌妒，好愚蠢。</span></p>
-      <p>……至少證明我不是跟路邊電線桿差不多的東西。 <span class="overwrite">電線桿不是挺有用的嗎^ ^</span></p>
+      <p>……至少證明我不是跟路邊電線桿差不多的東西。 <span class="overwrite">電線桿不是挺有用的嗎^^</span></p>
       <p>這麼說很可憐，我好歹從小就在她身邊，為她瞻前顧後，有種她是還珠格格我是小太監的氛圍。 <span class="overwrite">確實很可憐，這個比喻很適合你。</span></p>
       <p>雖然我想她應該不會說什麼。</p>
       <p>那傢伙會沒良心地、很高興地說恭喜，然後可能會在那邊跟沒營養的捷運跑酷小說影片一樣，一口一個嫂子嫂子地喊。</p>
@@ -261,7 +247,7 @@ const pages = [
 
       <p>喔，我今天知道新的痣的位置了，我以前沒有發現。</p>
 
-      <p>很噁心，我也知道。</p>
+      <p>很噁心，我知道。</p>
 
       <p>但如果我現在停下來不去記，好像反而更奇怪。我已經記了這麼久。如果我不記下來，哪天我忘記該怎麼辦？如果哪天我會需要用這些資訊來確認你是你，該怎麼辦？</p>
 
@@ -278,7 +264,7 @@ const pages = [
       <p>她家的備用鑰匙位置，這個不用記，她說放在我這裡最安全。</p>
       <p>還有什麼？</p>
       <p>喔，我今天知道新的痣的位置了，我以前沒有發現。</p>
-      <p>很噁心，我也知道。</p>
+      <p>很噁心，我知道。</p>
       <p>但如果我現在停下來不去記，好像反而更奇怪。我已經記了這麼久。如果我不記下來，哪天我忘記該怎麼辦？如果哪天我會需要用這些資訊來確認你是你，該怎麼辦？ <span class="overwrite">確實用上了，很好用，謝謝。</span></p>
       <p>我當然需要記得。 <span class="overwrite">現在我也記得了。</span></p>
     `
@@ -454,11 +440,8 @@ const pages = [
 
       <p>……最好再認真說一次喜歡我。</p>
 
-      <p>一次就好。</p>
+      <p>一次就夠了，足夠我記很久。一輩子。</p>
 
-      <p>一次就夠了，足夠我記很久。</p>
-
-      <p>一輩子。</p>
     `,
     after:`
       <p>我有時候會想，如果她真的跟我在一起了，生活大概也不會變很多。</p>
@@ -470,9 +453,7 @@ const pages = [
       <p>但如果是她的話，就肯定會說，畢竟那就是她。</p>
       <p>算了，我想只要她願意親一下我就好。</p>
       <p>……最好再認真說一次喜歡我。</p>
-      <p>一次就好。</p>
-      <p>一次就夠了，足夠我記很久。</p>
-      <p>一輩子。 <span class="overwrite">你的一輩子特別短呢。</span></p>
+      <p>一次就夠了，足夠我記很久。一輩子。<span class="overwrite">你的一輩子特別短呢。</span></p>
     `
   },
   {
@@ -564,17 +545,12 @@ const uiSeparator = document.getElementById("uiSeparator");
 /*
   Page-flip engine:
   - StPageFlip is used when the CDN library is available.
-  - All direct mouse/touch page-turn gestures are disabled.
-  - Readers use our side arrows / keyboard, so there is no tiny-corner problem.
-  - If CDN loading fails, the original v32 swap animation remains as fallback.
+  - use side arrows / keyboard, so there is no tiny-corner problem.
+  - If CDN loading fails, the original swap animation remains as fallback.
 */
 let pageFlip = null;
 let flipEngineActive = false;
 
-/*
-  Post-reading encounter.
-  Trigger remains exactly v32: reach the final reveal, then return to cover.
-*/
 const ENCOUNTER_IMAGES = {
   hand: "./assets/encounter/hand.png",
   return: "./assets/encounter/hand.png",
@@ -803,7 +779,7 @@ function initFlipEngine(){
   }
 }
 
-/* ===== Original v32 renderer: fallback only ===== */
+/* ===== fallback only ===== */
 function fallbackPage(){ return document.getElementById("page"); }
 
 function renderCoverFallback(){
@@ -1088,8 +1064,6 @@ function loadPageFlipLibraryInBackground(){
   tag.src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js";
   tag.async=true;
   tag.onload=()=>{
-    // Upgrade only while the reader is still on the cover. If they already began
-    // reading, keep the stable v32 fallback for that session instead of jumping DOM.
     if(index === -1 && !burned && !encounterActive && !flipEngineActive){
       initFlipEngine();
     }
@@ -1100,7 +1074,6 @@ function loadPageFlipLibraryInBackground(){
   document.head.appendChild(tag);
 }
 
-/* Init: v32 is immediately usable; StPageFlip upgrades it in the background. */
 if(burned){
   showBurnedState();
 }else{
